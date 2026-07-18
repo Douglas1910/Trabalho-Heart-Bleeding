@@ -12,6 +12,8 @@
 
 int main()
 {
+    simularMemoria();
+    
     WSADATA wsa;
     
     SOCKET servidor;
