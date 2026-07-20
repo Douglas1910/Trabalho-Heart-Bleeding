@@ -13,9 +13,9 @@
 int main()
 {
     simularMemoria();
-    
+
     WSADATA wsa;
-    
+
     SOCKET servidor;
     SOCKET cliente;
 
@@ -24,10 +24,9 @@ int main()
 
     int tamanhoEndereco;
 
-    char buffer[TAM_BUFFER];
+    Mensagem mensagemRecebida;
 
 
-    // Inicializa Winsock
     if (WSAStartup(MAKEWORD(2,2), &wsa) != 0)
     {
         printf("Erro ao iniciar Winsock\n");
@@ -35,8 +34,8 @@ int main()
     }
 
 
-    // Criando socket
     servidor = socket(AF_INET, SOCK_STREAM, 0);
+
 
     if (servidor == INVALID_SOCKET)
     {
@@ -46,14 +45,14 @@ int main()
     }
 
 
-    // Configurando endereço
+
     enderecoServidor.sin_family = AF_INET;
     enderecoServidor.sin_addr.s_addr = INADDR_ANY;
     enderecoServidor.sin_port = htons(PORTA);
 
 
-    // Associando socket à porta
-    if (bind(
+
+    if(bind(
         servidor,
         (struct sockaddr*)&enderecoServidor,
         sizeof(enderecoServidor)
@@ -66,7 +65,7 @@ int main()
     }
 
 
-    // Coloca servidor esperando conexões
+
     listen(servidor, 1);
 
 
@@ -77,7 +76,6 @@ int main()
     tamanhoEndereco = sizeof(enderecoCliente);
 
 
-    // Aceita cliente
     cliente = accept(
         servidor,
         (struct sockaddr*)&enderecoCliente,
@@ -97,36 +95,63 @@ int main()
     printf("Cliente conectado!\n");
 
 
-    // Recebe mensagem
-    memset(buffer, 0, TAM_BUFFER);
+
+    memset(&mensagemRecebida, 0, sizeof(Mensagem));
 
 
-    recv(
+    receberMensagem(
         cliente,
-        buffer,
-        TAM_BUFFER,
-        0
-    );
-
-
-    printf("Mensagem recebida: %s\n", buffer);
-
-
-
-    // Responde
-    char resposta[] = "Mensagem recebida pelo servidor";
-
-    send(
-        cliente,
-        resposta,
-        strlen(resposta),
-        0
+        &mensagemRecebida
     );
 
 
 
-    // Fecha conexões
+    printf("\nMensagem recebida:\n");
+
+
+    printf("Tamanho declarado: %d\n",
+        mensagemRecebida.tamanhoDeclarado);
+
+
+    printf("Tamanho real: %d\n",
+        mensagemRecebida.tamanhoReal);
+
+
+    printf("Dados: %s\n",
+        mensagemRecebida.dados);
+
+
+
+    Mensagem respostaMensagem;
+
+
+    memset(&respostaMensagem, 0, sizeof(Mensagem));
+
+
+    strcpy(
+        respostaMensagem.dados,
+        "Estrutura recebida com sucesso"
+    );
+
+
+    respostaMensagem.tamanhoReal =
+        strlen(respostaMensagem.dados);
+
+
+    respostaMensagem.tamanhoDeclarado =
+        respostaMensagem.tamanhoReal;
+
+
+
+    enviarMensagem(
+        cliente,
+        &respostaMensagem
+    );
+
+
+
     closesocket(cliente);
+
     closesocket(servidor);
 
     WSACleanup();

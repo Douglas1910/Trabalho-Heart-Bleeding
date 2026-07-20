@@ -42,3 +42,25 @@ void simularMemoria()
 
     printf("Memoria liberada\n");
 }
+
+int enviarMensagem(SOCKET socket, Mensagem *mensagem)
+{
+    return send(
+        socket,
+        (char*)mensagem,
+        sizeof(Mensagem),
+        0
+    );
+}
+
+
+
+int receberMensagem(SOCKET socket, Mensagem *mensagem)
+{
+    return recv(
+        socket,
+        (char*)mensagem,
+        sizeof(Mensagem),
+        0
+    );
+}

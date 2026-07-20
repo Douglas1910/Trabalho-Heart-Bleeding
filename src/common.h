@@ -1,11 +1,14 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include <winsock2.h>
+
+
 #define PORTA 8080
 
 #define TAM_BUFFER 1024
 
-// Estrutura de mensagem
+
 typedef struct
 {
     int tamanhoDeclarado;
@@ -16,8 +19,13 @@ typedef struct
 } Mensagem;
 
 
-// Função para simular uso da memória
+
 void simularMemoria();
+
+
+int enviarMensagem(SOCKET socket, Mensagem *mensagem);
+
+int receberMensagem(SOCKET socket, Mensagem *mensagem);
 
 
 #endif

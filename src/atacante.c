@@ -18,85 +18,102 @@ int main()
 
     struct sockaddr_in enderecoServidor;
 
-    char mensagem[] = "Cliente conectado!";
-    char resposta[TAM_BUFFER];
+
+    Mensagem mensagem;
+
+    Mensagem respostaMensagem;
 
 
-    // Inicializa Winsock
-    if (WSAStartup(MAKEWORD(2,2), &wsa) != 0)
+
+    memset(&mensagem, 0, sizeof(Mensagem));
+
+
+
+    strcpy(
+        mensagem.dados,
+        "Cliente conectado!"
+    );
+
+
+    mensagem.tamanhoDeclarado = 100;
+
+
+    mensagem.tamanhoReal =
+        strlen(mensagem.dados);
+
+
+
+    if(WSAStartup(MAKEWORD(2,2), &wsa) != 0)
     {
         printf("Erro ao iniciar Winsock\n");
         return 1;
     }
 
 
-    // Criando socket
+
     cliente = socket(AF_INET, SOCK_STREAM, 0);
 
 
-    if(cliente == INVALID_SOCKET)
-    {
-        printf("Erro ao criar socket\n");
-        WSACleanup();
-        return 1;
-    }
 
-
-    // Configuração do servidor
     enderecoServidor.sin_family = AF_INET;
     enderecoServidor.sin_port = htons(PORTA);
-
-
-    // Endereço local
     enderecoServidor.sin_addr.s_addr = inet_addr("127.0.0.1");
 
 
-    // Conectar no servidor
+
     if(connect(
         cliente,
         (struct sockaddr*)&enderecoServidor,
         sizeof(enderecoServidor)
     ) == SOCKET_ERROR)
     {
-        printf("Nao foi possivel conectar ao servidor\n");
-
-        closesocket(cliente);
-        WSACleanup();
+        printf("Nao foi possivel conectar\n");
 
         return 1;
     }
 
 
+
     printf("Conectado ao servidor!\n");
 
 
-    // Envia mensagem
-    send(
+
+    enviarMensagem(
         cliente,
-        mensagem,
-        strlen(mensagem),
-        0
+        &mensagem
     );
 
 
-    printf("Mensagem enviada: %s\n", mensagem);
+
+    printf("Mensagem enviada!\n");
+
+
+    printf("Declarado: %d\n",
+        mensagem.tamanhoDeclarado);
+
+
+    printf("Real: %d\n",
+        mensagem.tamanhoReal);
+
+
+    printf("Dados: %s\n",
+        mensagem.dados);
 
 
 
-    // Recebe resposta
-
-    memset(resposta, 0, TAM_BUFFER);
+    memset(&respostaMensagem, 0, sizeof(Mensagem));
 
 
-    recv(
+    receberMensagem(
         cliente,
-        resposta,
-        TAM_BUFFER,
-        0
+        &respostaMensagem
     );
 
 
-    printf("Resposta do servidor: %s\n", resposta);
+    printf(
+        "Resposta do servidor: %s\n",
+        respostaMensagem.dados
+    );
 
 
 
