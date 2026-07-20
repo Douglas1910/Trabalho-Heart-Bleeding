@@ -321,9 +321,6 @@ A principal medida de prevenção é validar todos os tamanhos recebidos e nunca
 
 **Aluno:** `Douglas de Souza N Santos`  
 **Matrícula:** `12211bsi245`  
-**Disciplina:** Segurança da Informação  
-**Curso:** Sistemas de Informação  
-**Ano:** 2026
 
 ---
 
